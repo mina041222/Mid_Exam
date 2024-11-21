@@ -36,15 +36,9 @@ public class ZombieSpawner : MonoBehaviour {
 
     // 현재 웨이브에 맞춰 좀비들을 생성
     private void SpawnWave() {
-        //웨이브 1 증가
         wave++;
-
-        //현재 웨이브 * 1.5를 반올림한 수만큼 좀비 생성
         int spawnCount = Mathf.RoundToInt(wave * 1.5f);
-        //1 -> 1.5(2), 2 ->3, 3->4.5(5), 4 -.5(5), 4 ->6
-
-        //spawnCount 만큼 좀비 생성
-        for(int i = 0; i < spawnCount; i ++)
+        for (int i = 0; i < spawnCount; i++)
         {
             CreateZombie();
         }
@@ -52,17 +46,16 @@ public class ZombieSpawner : MonoBehaviour {
 
     // 좀비를 생성하고 생성한 좀비에게 추적할 대상을 할당
     private void CreateZombie() {
-        ZombieData zombieData = zombieData[Random.Range(0, zombieDatas.Length)];
+
+        ZombieData zombieData = zombieDatas[Random.Range(0, zombieDatas.Length)];
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        Zombie zombie = InStantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
+        Zombie zombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
 
         zombie.Setup(zombieData);
-        zombie.Add(zombie);
+        zombies.Add(zombie);
 
-        zombie.OnDeath += () => zombies.Remove(zombie);
-        zombie.OnDeath += () => Destroy(zombie.GameObject, 10f);
-
-        zombie.OnDeath += () => GameManager.instance.AddScore(100);
-
+        zombie.onDeath += () => zombies.Remove(zombie);
+        zombie.onDeath += () => Destroy(zombie.gameObject, 10f);
+        zombie.onDeath += () => GameManager.instance.AddScore(100);
     }
 }
